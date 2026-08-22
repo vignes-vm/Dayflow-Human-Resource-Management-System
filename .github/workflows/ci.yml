@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/dayflow_test?schema=public"
+  JWT_ACCESS_SECRET: "ci-access-secret-ci-access-secret"
+  JWT_REFRESH_SECRET: "ci-refresh-secret-ci-refresh-secret"
+  ACCESS_TTL: "15m"
+  REFRESH_TTL: "7d"
+  MAIL_FROM: "Dayflow <no-reply@dayflow.test>"
+  APP_URL: "http://localhost:5173"
+  API_URL: "http://localhost:4000"
+  UPLOAD_DIR: "./uploads"
+  NODE_ENV: "test"
+  PORT: "4000"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dayflow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @dayflow/api prisma generate
+
+      - name: Run migrations
+        run: pnpm --filter @dayflow/api prisma migrate deploy
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

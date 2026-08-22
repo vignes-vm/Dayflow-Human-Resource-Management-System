@@ -1,9 +1,12 @@
-// Scaffold placeholder — the routed app shell lands in Step 6 (M2).
-// See docs/Dayflow-Team-Plan.md §2.3.
+import { RouterProvider } from "react-router-dom";
+
+import { AppProviders } from "@/app/providers";
+import { router } from "@/app/router";
+
 export default function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-lg">Dayflow — scaffold ready.</p>
-    </main>
+    <AppProviders>
+      <RouterProvider router={router} />
+    </AppProviders>
   );
 }

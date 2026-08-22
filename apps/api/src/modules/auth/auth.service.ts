@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
-import { Prisma, Role, UserStatus } from "@prisma/client";
+import { Role, UserStatus } from "@prisma/client";
 import type { RegisterCompanyInput } from "@dayflow/shared";
 
 import { buildLoginId, deriveCompanyCode } from "@/engines/loginId.js";
+import { writeAudit } from "@/lib/audit.js";
 import { allocateSerial } from "@/lib/loginIdCounter.js";
 import { parseDurationMs } from "@/lib/duration.js";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mailer.js";
@@ -17,29 +18,6 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   const parts = fullName.trim().split(/\s+/);
   const [firstName = "", ...rest] = parts;
   return { firstName, lastName: rest.join(" ") };
-}
-
-async function writeAudit(params: {
-  companyId: string;
-  actorId: string | null;
-  action: string;
-  entity: string;
-  entityId: string;
-  before?: unknown;
-  after?: unknown;
-}): Promise<void> {
-  await prisma.auditLog.create({
-    data: {
-      companyId: params.companyId,
-      actorId: params.actorId,
-      action: params.action,
-      entity: params.entity,
-      entityId: params.entityId,
-      before:
-        params.before === undefined ? Prisma.JsonNull : (params.before as Prisma.InputJsonValue),
-      after: params.after === undefined ? Prisma.JsonNull : (params.after as Prisma.InputJsonValue),
-    },
-  });
 }
 
 export interface RegisterCompanyResult {

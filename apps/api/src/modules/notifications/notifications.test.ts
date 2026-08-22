@@ -1,39 +1,8 @@
-import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
-import request from "supertest";
-import bcrypt from "bcryptjs";
 
-import { app } from "@/index.js";
 import { prisma } from "@/lib/prisma.js";
 import { notify } from "@/lib/notify.js";
-
-async function createSignedInUser() {
-  const suffix = randomUUID().slice(0, 8);
-  const company = await prisma.company.create({
-    data: { name: `Notif Co ${suffix}`, code: "NC" },
-  });
-  const passwordHash = await bcrypt.hash("Str0ngPass!", 4);
-  const user = await prisma.user.create({
-    data: {
-      companyId: company.id,
-      loginId: `NCJODO2026${suffix.slice(0, 4).toUpperCase()}`,
-      email: `notif-${suffix}@example.com`,
-      passwordHash,
-      role: "ADMIN",
-      status: "ACTIVE",
-      emailVerifiedAt: new Date(),
-      mustChangePassword: false,
-    },
-  });
-
-  const agent = request.agent(app);
-  const loginRes = await agent
-    .post("/api/v1/auth/login")
-    .send({ identifier: user.email, password: "Str0ngPass!" });
-  expect(loginRes.status).toBe(200);
-
-  return { agent, user, company };
-}
+import { createSignedInUser } from "@/test/helpers.js";
 
 afterAll(async () => {
   await prisma.$disconnect();

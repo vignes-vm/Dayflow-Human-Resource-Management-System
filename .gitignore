@@ -145,3 +145,6 @@ Dayflow-Team-Plan.md
 Dayflow-ClaudeCode-Prompts-v2.md
 Dayflow-Blueprint-v2.md
 M3_approach.md
+
+# Locally uploaded avatars, documents and generated payslip PDFs
+backend/uploads/

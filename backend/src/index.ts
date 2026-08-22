@@ -9,6 +9,8 @@ import { errorHandler, notFoundHandler } from "@/middleware/errorHandler.js";
 import { requestId } from "@/middleware/requestId.js";
 import { router } from "@/router.js";
 import { logger } from "@/lib/logger.js";
+import { scheduleDailyClose } from "@/jobs/dailyClose.js";
+import { schedulePresenceSweep } from "@/jobs/presenceSweep.js";
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
@@ -45,6 +47,8 @@ if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
     logger.info(`Dayflow API listening on port ${port}`);
   });
+  scheduleDailyClose();
+  schedulePresenceSweep();
 }
 
 export { app };

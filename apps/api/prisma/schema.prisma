@@ -1,0 +1,16 @@
+// Placeholder schema for Step 1 scaffold — the full data model lands in Step 2.
+// M1 ONLY — see docs/Dayflow-Team-Plan.md §3.1. Nobody else edits this file.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model HealthCheck {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+}

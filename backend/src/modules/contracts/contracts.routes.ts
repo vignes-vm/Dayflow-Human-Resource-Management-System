@@ -23,7 +23,7 @@ contractRoutes.use(requireAuth, requirePasswordChanged);
 
 contractRoutes.post(
   "/preview",
-  requireRole("ADMIN", "HR"),
+  requireRole("ADMIN"),
   validate(contractPreviewSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,7 +41,7 @@ contractRoutes.post(
 
 contractRoutes.post(
   "/",
-  requireRole("ADMIN", "HR"),
+  requireRole("ADMIN"),
   validate(createContractSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -59,7 +59,7 @@ contractRoutes.post(
 
 contractRoutes.get(
   "/:employeeId",
-  assertSelfOrAdmin((req) => req.params.employeeId, { allowHr: true }),
+  assertSelfOrAdmin((req) => req.params.employeeId),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const contracts = await getContracts(req.params.employeeId!, req.user!.companyId);

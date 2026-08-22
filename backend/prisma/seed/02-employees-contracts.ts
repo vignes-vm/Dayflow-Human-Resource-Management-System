@@ -138,7 +138,7 @@ export async function seed(): Promise<void> {
       if (person.isMgr) {
         await tx.department.updateMany({
           where: { id: depMap.get(person.d) },
-          data: { headId: emp.id },
+          data: { headEmployeeId: emp.id },
         });
       }
 
@@ -147,13 +147,17 @@ export async function seed(): Promise<void> {
       }
 
       // TimeOff Allocations
+      const yearStart = new Date(Date.UTC(JOINING_YEAR, 0, 1));
+      const yearEnd = new Date(Date.UTC(JOINING_YEAR, 11, 31));
       await tx.timeOffAllocation.createMany({
         data: timeOffTypes.map((t) => ({
+          companyId: company.id,
           employeeId: emp.id,
           typeId: t.id,
-          year: 2026, // current year
-          totalDays: t.defaultAllocationDays,
-          usedDays: 0,
+          days: t.defaultAllocationDays,
+          validFrom: yearStart,
+          validTo: yearEnd,
+          status: "APPROVED" as const,
         })),
       });
 
@@ -223,7 +227,6 @@ export async function seed(): Promise<void> {
         data: {
           employeeId: emp.id,
           personalEmail: `${person.f.toLowerCase()}@example.com`,
-          mobile: `98${Math.floor(10000000 + Math.random() * 90000000)}`,
         },
       });
 

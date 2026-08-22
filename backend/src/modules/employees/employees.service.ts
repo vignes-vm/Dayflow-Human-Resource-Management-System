@@ -6,7 +6,7 @@ import type { Prisma } from "@prisma/client";
 import { buildLoginId } from "@/engines/loginId.js";
 import { writeAudit } from "@/lib/audit.js";
 import { allocateSerial } from "@/lib/loginIdCounter.js";
-import { sendEmployeeCredentialsEmail } from "@/lib/mailer.js";
+import { sendCredentialsEmail } from "@/lib/mailer.js";
 import { prisma } from "@/lib/prisma.js";
 import { ApiError } from "@/middleware/errorHandler.js";
 import type {
@@ -122,7 +122,7 @@ async function buildPresenceContext(companyId: string, timezone: string): Promis
 export async function listEmployees(companyId: string, query: ListEmployeesQuery) {
   const { search, departmentId, presence, page, pageSize } = query;
 
-  const where = {
+  const where: Prisma.EmployeeWhereInput = {
     companyId,
     status: "ACTIVE",
     ...(departmentId ? { departmentId } : {}),
@@ -381,10 +381,11 @@ export async function createEmployee(
     },
   });
 
-  const mail = await sendEmployeeCredentialsEmail(email, {
+  const mail = await sendCredentialsEmail(email, {
     name: `${input.firstName} ${input.lastName ?? ""}`.trim(),
     loginId: user.loginId,
-    temporaryPassword,
+    password: temporaryPassword,
+    appUrl: process.env.APP_URL ?? "http://localhost:5173",
   });
 
   return {

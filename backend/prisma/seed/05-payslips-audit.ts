@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { prisma } from "../../src/lib/prisma.js";
 import { runPayroll, publishPayroll } from "../../src/modules/payroll/payroll.service.js";
 
@@ -56,16 +58,16 @@ export async function seed(): Promise<void> {
 
   const auditData = [];
   for (let i = 0; i < 30; i++) {
-    const e = entities[Math.floor(Math.random() * entities.length)];
-    const a = actions[Math.floor(Math.random() * actions.length)];
+    const e = entities[Math.floor(Math.random() * entities.length)]!;
+    const a = actions[Math.floor(Math.random() * actions.length)]!;
     auditData.push({
       companyId: company.id,
       actorId: admin.id,
       action: `${e.toUpperCase()}_${a}`,
       entity: e,
       entityId: `mock-id-${i}`,
-      before: a === "UPDATED" ? { status: "OLD" } : null,
-      after: a !== "DELETED" ? { status: "NEW" } : null,
+      before: a === "UPDATED" ? { status: "OLD" } : Prisma.JsonNull,
+      after: a !== "DELETED" ? { status: "NEW" } : Prisma.JsonNull,
       createdAt: new Date(now.getTime() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000), // Random time in last 30 days
     });
   }
@@ -78,10 +80,11 @@ export async function seed(): Promise<void> {
     notifData.push({
       companyId: company.id,
       userId: admin.id,
+      type: "SYSTEM_UPDATE",
       title: "System Update",
       body: `Notification generated for testing purposes #${i + 1}`,
       link: "/settings",
-      isRead: i < 5, // half read
+      readAt: i < 5 ? new Date() : null, // half read
       createdAt: new Date(now.getTime() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000),
     });
   }

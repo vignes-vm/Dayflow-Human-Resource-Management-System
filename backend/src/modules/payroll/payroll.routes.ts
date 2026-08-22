@@ -23,7 +23,7 @@ payrollRoutes.use(requireAuth, requirePasswordChanged);
 
 payrollRoutes.post(
   "/run",
-  requireRole("ADMIN", "HR"),
+  requireRole("ADMIN"),
   validate(runPayrollSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -42,7 +42,7 @@ payrollRoutes.post(
 
 payrollRoutes.post(
   "/publish",
-  requireRole("ADMIN", "HR"),
+  requireRole("ADMIN"),
   validate(publishPayrollSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -61,7 +61,7 @@ payrollRoutes.post(
 
 payrollRoutes.get(
   "/payslips/:employeeId",
-  assertSelfOrAdmin((req) => req.params.employeeId, { allowHr: true }),
+  assertSelfOrAdmin((req) => req.params.employeeId),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const payslips = await getPayslips(req.params.employeeId!, req.user!.companyId);

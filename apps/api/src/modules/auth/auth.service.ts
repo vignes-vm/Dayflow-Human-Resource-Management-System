@@ -61,8 +61,8 @@ export async function registerCompany(input: RegisterCompanyInput): Promise<Regi
       },
     });
 
-    const serial = await allocateSerial(tx, company.id, joiningYear);
-    const loginId = buildLoginId({
+    let serial = await allocateSerial(tx, company.id, joiningYear);
+    let loginId = buildLoginId({
       companyCode: company.code,
       firstName,
       lastName,
@@ -70,6 +70,29 @@ export async function registerCompany(input: RegisterCompanyInput): Promise<Regi
       serial,
       serialWidth: company.serialWidth,
     });
+
+    // Company code + name initials can coincide across companies (see
+    // Dayflow-Blueprint-v2.md §8), and loginId is unique system-wide, so
+    // keep drawing the next serial for this company until it's free.
+    for (let attempt = 0; await tx.user.findUnique({ where: { loginId } }); attempt++) {
+      if (attempt >= 20) {
+        throw new ApiError(
+          409,
+          "LOGIN_ID_COLLISION",
+          "Could not generate a unique Login ID for this company code; try a different company code",
+          "companyName",
+        );
+      }
+      serial = await allocateSerial(tx, company.id, joiningYear);
+      loginId = buildLoginId({
+        companyCode: company.code,
+        firstName,
+        lastName,
+        joiningYear,
+        serial,
+        serialWidth: company.serialWidth,
+      });
+    }
 
     const user = await tx.user.create({
       data: {

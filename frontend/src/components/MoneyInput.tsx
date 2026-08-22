@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 import { Input, type InputProps } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
@@ -20,6 +20,14 @@ const DECIMAL_PATTERN = /^\d*\.?\d{0,2}$/;
 export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
   ({ value, onValueChange, currencySymbol = "₹", className, ...props }, ref) => {
     const [local, setLocal] = useState(value);
+
+    // Resync when the value changes for reasons other than this input's own
+    // typing — e.g. a derived/disabled field (Yearly wage) recomputing from
+    // another field, or async data (an existing contract's wage) arriving
+    // after this component already mounted with an empty initial value.
+    useEffect(() => {
+      setLocal(value);
+    }, [value]);
 
     const display = local;
 

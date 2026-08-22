@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 import { Input, type InputProps } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
@@ -14,6 +14,12 @@ const PERCENT_PATTERN = /^\d{0,3}\.?\d{0,2}$/;
 export const PercentInput = forwardRef<HTMLInputElement, PercentInputProps>(
   ({ value, onValueChange, className, ...props }, ref) => {
     const [local, setLocal] = useState(value);
+
+    // Resync when the value changes from outside this input (e.g. loading
+    // an existing contract's components after mount) — see MoneyInput.tsx.
+    useEffect(() => {
+      setLocal(value);
+    }, [value]);
 
     return (
       <div className="relative">

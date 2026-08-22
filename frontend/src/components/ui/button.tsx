@@ -16,19 +16,27 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     { className, variant, size, asChild = false, loading = false, disabled, children, ...props },
     ref,
   ) => {
-    const Comp = asChild ? Slot : "button";
+    const sharedProps = {
+      ref,
+      className: cn(
+        buttonVariants({ variant, size }),
+        "cursor-pointer disabled:cursor-not-allowed",
+        className,
+      ),
+      disabled: disabled || loading,
+      "aria-busy": loading || undefined,
+      ...props,
+    };
+
+    // Slot (asChild) requires exactly one child element — it delegates
+    // rendering entirely to that child, so the loading spinner (which would
+    // add a second child node) is only supported in the plain <button> path.
+    if (asChild) {
+      return <Slot {...sharedProps}>{children}</Slot>;
+    }
+
     return (
-      <Comp
-        ref={ref}
-        className={cn(
-          buttonVariants({ variant, size }),
-          "cursor-pointer disabled:cursor-not-allowed",
-          className,
-        )}
-        disabled={disabled || loading}
-        aria-busy={loading || undefined}
-        {...props}
-      >
+      <button {...sharedProps}>
         {loading ? (
           <span
             className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
@@ -36,7 +44,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           />
         ) : null}
         {children}
-      </Comp>
+      </button>
     );
   },
 );

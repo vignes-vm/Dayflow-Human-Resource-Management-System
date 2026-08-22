@@ -5,7 +5,7 @@ import { navItemsForRole } from "@/app/nav.config";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
 import { queryKeys } from "@/lib/queryKeys";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PresenceDot } from "@/components/PresenceDot";
 import { CheckInControl } from "@/components/CheckInControl";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -30,6 +30,14 @@ export function AppShell() {
   const { me } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const todayQuery = useQuery({
+    queryKey: ["attendance", "me", "today"],
+    queryFn: () =>
+      api.get<{ presence: "GREEN" | "AIRPLANE" | "YELLOW" | "RED" }>("/attendance/me/today"),
+    refetchInterval: 30_000,
+    enabled: !!me,
+  });
 
   if (!me) return null;
 
@@ -87,7 +95,7 @@ export function AppShell() {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden items-center gap-2 sm:flex">
-              <PresenceDot state="RED" />
+              <PresenceDot state={todayQuery.data?.presence ?? "RED"} />
               <CheckInControl />
             </div>
             <NotificationBell />

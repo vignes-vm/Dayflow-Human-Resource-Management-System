@@ -1,4 +1,4 @@
-// apps/api/src/router.ts — M1 ONLY. Do not edit; your module file is already mounted.
+// backend/src/router.ts — M1 ONLY. Do not edit; your module file is already mounted.
 // See docs/Dayflow-Team-Plan.md §3.2. Each import resolves to a stub Router that
 // its owner fills in — nobody edits this file again once their route exists.
 import { Router } from "express";

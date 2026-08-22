@@ -170,13 +170,11 @@ describe("session lifecycle", () => {
       .post("/api/v1/auth/login")
       .send({ identifier: payload.email, password: payload.password });
 
-    const wrongCurrent = await agent
-      .post("/api/v1/auth/change-password")
-      .send({
-        currentPassword: "wrong-one-1!",
-        newPassword: "NewStr0ngPass!",
-        confirmPassword: "NewStr0ngPass!",
-      });
+    const wrongCurrent = await agent.post("/api/v1/auth/change-password").send({
+      currentPassword: "wrong-one-1!",
+      newPassword: "NewStr0ngPass!",
+      confirmPassword: "NewStr0ngPass!",
+    });
     expect(wrongCurrent.status).toBe(401);
 
     const ok = await agent.post("/api/v1/auth/change-password").send({

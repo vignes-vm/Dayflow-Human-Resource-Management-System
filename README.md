@@ -6,14 +6,14 @@ The system aims to digitize and streamline core HR operations such as employee o
 
 ## Stack
 
-pnpm workspaces — `apps/api` (Express + TypeScript + Prisma), `apps/web` (Vite + React + TypeScript + Tailwind), `packages/shared` (Zod schemas shared by both).
+pnpm workspaces — `backend` (Express + TypeScript + Prisma), `frontend` (Vite + React + TypeScript + Tailwind), `packages/shared` (Zod schemas shared by both).
 
 ## Local setup
 
 ```bash
 pnpm install
-cp apps/api/.env.example apps/api/.env      # then point DATABASE_URL at a local Postgres
-cp apps/web/.env.example apps/web/.env
+cp backend/.env.example backend/.env      # then point DATABASE_URL at a local Postgres
+cp frontend/.env.example frontend/.env
 pnpm --filter @dayflow/api prisma migrate dev
 pnpm dev                                     # runs api (:4000) + web (:5173) together
 ```

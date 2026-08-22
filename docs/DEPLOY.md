@@ -1,6 +1,6 @@
 # Dayflow — Deployment Guide
 
-Target stack: **Neon** (Postgres) + **Render** (`apps/api`) + **Vercel** (`apps/web`), both
+Target stack: **Neon** (Postgres) + **Render** (`backend`) + **Vercel** (`frontend`), both
 auto-deploying on push to `main`. This doc is the runbook — it has not been run against live
 accounts in this session (no hosting credentials were available), so **live URLs and the
 "deployed" acceptance checks in Step 20 still need to be completed by whoever holds those
@@ -19,13 +19,13 @@ accounts.** Everything below is ready to execute as-is.
 3. Keep a second Neon branch (or a local Postgres) for CI/dev — never point CI at the
    production database.
 
-## 2. Deploy `apps/api` on Render
+## 2. Deploy `backend` on Render
 
 Create a **Web Service** pointing at this repo.
 
 | Setting | Value |
 |---|---|
-| Root directory | `apps/api` |
+| Root directory | `backend` |
 | Build command | `corepack enable && pnpm install --frozen-lockfile && pnpm --filter @dayflow/api prisma generate && pnpm --filter @dayflow/api build` |
 | Start command | `node dist/index.js` |
 | Health check path | `/api/v1/health` |
@@ -36,7 +36,7 @@ Run the migration as part of the release, either as a Render **pre-deploy comman
 
 ### Environment variables (Render)
 
-All variables documented in `apps/api/.env.example`:
+All variables documented in `backend/.env.example`:
 
 | Variable | Production value |
 |---|---|
@@ -51,17 +51,17 @@ All variables documented in `apps/api/.env.example`:
 | `NODE_ENV` | `production` |
 | `PORT` | Render sets this automatically |
 
-## 3. Deploy `apps/web` on Vercel
+## 3. Deploy `frontend` on Vercel
 
 | Setting | Value |
 |---|---|
-| Root directory | `apps/web` |
+| Root directory | `frontend` |
 | Framework preset | Vite |
 | Build command | `pnpm --filter @dayflow/web build` |
 | Output directory | `dist` |
 | Install command | `corepack enable && pnpm install --frozen-lockfile` |
 
-Add a SPA rewrite so client-side routes don't 404 on refresh — `apps/web/vercel.json`:
+Add a SPA rewrite so client-side routes don't 404 on refresh — `frontend/vercel.json`:
 
 ```json
 {
@@ -79,10 +79,10 @@ Add a SPA rewrite so client-side routes don't 404 on refresh — `apps/web/verce
 
 Auth uses httpOnly cookies across two different domains (Vercel ↔ Render), so in production:
 
-- `apps/api/src/modules/auth/auth.cookies.ts` already sets `Secure` + `SameSite=None` whenever
+- `backend/src/modules/auth/auth.cookies.ts` already sets `Secure` + `SameSite=None` whenever
   `NODE_ENV=production` — confirm that env var is actually set on Render.
 - Add the Vercel domain (and any preview-deployment wildcard you use) to the CORS allow-list —
-  `apps/api/src/index.ts` reads `APP_URL`, which currently supports a comma-separated list:
+  `backend/src/index.ts` reads `APP_URL`, which currently supports a comma-separated list:
   `APP_URL="https://dayflow.vercel.app,https://dayflow-*.vercel.app"` (adjust for exact preview
   URLs your Vercel project generates, since CORS does not support wildcards natively — list them
   explicitly, or add a small origin-matching function if preview deploys need to work).
@@ -93,7 +93,7 @@ Auth uses httpOnly cookies across two different domains (Vercel ↔ Render), so 
 2. Render service healthy — `GET https://<api>/api/v1/health` returns `{"status":"ok"}`.
 3. Vercel deployment loads and can reach the API (check the Network tab for CORS errors).
 4. Run the seed once against production (`DATABASE_URL=<neon> pnpm --filter @dayflow/api db:seed`)
-   — see `apps/api/prisma/seed/`. Only `01-company-users.ts` exists as of this commit; the
+   — see `backend/prisma/seed/`. Only `01-company-users.ts` exists as of this commit; the
    full demo dataset (employees, attendance, time off, payroll) lands as the other members
    finish Steps 7–16.
 5. Sign in as the seeded admin (`admin@odooindia.example` / `Dayflow@2026`) on the deployed

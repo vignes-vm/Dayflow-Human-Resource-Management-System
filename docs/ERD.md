@@ -1,6 +1,6 @@
 # Dayflow — Entity Relationship Diagram
 
-Generated from `apps/api/prisma/schema.prisma`. Regenerate this diagram whenever
+Generated from `backend/prisma/schema.prisma`. Regenerate this diagram whenever
 the schema changes — M1 owns both files (see `docs/Dayflow-Team-Plan.md` §3.1).
 
 ```mermaid
@@ -272,7 +272,7 @@ erDiagram
 ## Notes
 
 - Every tenant-owned model carries `companyId` and is read through
-  `scopedPrisma(companyId)` (`apps/api/src/lib/prisma.ts`), which injects
+  `scopedPrisma(companyId)` (`backend/src/lib/prisma.ts`), which injects
   `where.companyId` on `findMany`/`findFirst` automatically.
 - `Employee.managerId` is a self-relation (`ManagerReports`).
 - Cascade deletes are restricted to `RefreshToken`, `EmailToken` (from `User`),
@@ -281,5 +281,5 @@ erDiagram
   `Payslip`) — never on `Payslip` or `AuditLog` themselves.
 - All money fields are `Decimal`: `Decimal(12,2)` for currency amounts,
   `Decimal(9,4)` for component percentages/values, `Decimal(5,1)`/`Decimal(4,1)`
-  for allocation/request day counts — see `apps/api/src/lib/money.ts` for the
+  for allocation/request day counts — see `backend/src/lib/money.ts` for the
   arithmetic helpers that operate on them.

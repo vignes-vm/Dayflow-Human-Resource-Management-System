@@ -18,7 +18,7 @@ Team ownership and workflow: `docs/Dayflow-Team-Plan.md`.
 
 | Layer | Choice |
 |---|---|
-| Repo | pnpm workspaces: `apps/api`, `apps/web`, `packages/shared` |
+| Repo | pnpm workspaces: `backend`, `frontend`, `packages/shared` |
 | Frontend | React 18 + Vite + TypeScript + Tailwind + shadcn/ui |
 | Frontend state | TanStack Query · React Hook Form + Zod · Recharts · Framer Motion |
 | Backend | Node + Express + TypeScript + Prisma |
@@ -33,7 +33,7 @@ Team ownership and workflow: `docs/Dayflow-Team-Plan.md`.
 ## Folder conventions
 
 ```
-apps/api/src/
+backend/src/
 ├─ index.ts       app bootstrap
 ├─ router.ts       every route mount point, declared once
 ├─ engines/        pure business-rule functions — no DB, no Express, fully unit-tested
@@ -42,7 +42,7 @@ apps/api/src/
 ├─ jobs/           scheduled jobs (daily close, presence sweep)
 └─ modules/<name>/  routes + controllers + services for one domain, mounted in router.ts
 
-apps/web/src/
+frontend/src/
 ├─ app/            router, providers, guards, nav config
 ├─ styles/         design tokens
 ├─ components/     shared UI primitives and cross-feature components
@@ -71,9 +71,9 @@ Conventional Commits: `feat(scope): summary`, `fix(scope): summary`, `chore: sum
 4. Every mutating route writes an `AuditLog` entry.
 5. Every list/read query is scoped by `companyId`.
 6. All money and percentage arithmetic uses `decimal.js`. Never JavaScript floats.
-7. Business rules live as pure functions in `apps/api/src/engines/` with unit tests and no DB access.
+7. Business rules live as pure functions in `backend/src/engines/` with unit tests and no DB access.
 8. Every new screen ships with loading, empty and error states.
-9. All colours and fonts come from the token file (`apps/web/src/styles/tokens.css`) — never a hardcoded hex.
+9. All colours and fonts come from the token file (`frontend/src/styles/tokens.css`) — never a hardcoded hex.
 
 ## Commands
 

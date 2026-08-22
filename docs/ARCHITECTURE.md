@@ -64,7 +64,7 @@ flowchart TD
   O -->|no| Q
 ```
 
-Implemented in `apps/api/src/modules/auth` (Steps 1–4). The employee-creation half (J–M)
+Implemented in `backend/src/modules/auth` (Steps 1–4). The employee-creation half (J–M)
 belongs to Step 7 (M3) and is not yet built.
 
 ## Sign in
@@ -101,7 +101,7 @@ flowchart TD
 A stolen-and-replayed refresh token is the attack this defends against: the legitimate
 client's *next* refresh will present a token that's already been revoked-and-replaced by the
 attacker's use, which is treated as reuse and kills every token in that family — both parties
-get logged out and must sign in again. See `apps/api/src/modules/auth/auth.service.ts`
+get logged out and must sign in again. See `backend/src/modules/auth/auth.service.ts`
 (`refreshSession`) and the reuse test in `auth.test.ts`.
 
 ## Authorisation
@@ -129,7 +129,7 @@ flowchart TD
 
 **Three guards, not one** — role (`requireRole`), company scope (`requireCompanyScope` /
 `scopedPrisma`) and resource ownership (`assertSelfOrAdmin`), all in
-`apps/api/src/middleware/auth.ts`. `scopedPrisma(companyId)` (`lib/prisma.ts`) is a Prisma
+`backend/src/middleware/auth.ts`. `scopedPrisma(companyId)` (`lib/prisma.ts`) is a Prisma
 client extension that injects `where.companyId` on `findMany`/`findFirst` for every
 tenant-owned model, so a route can't forget the company filter; the raw `prisma` export is a
 deliberate, documented bypass for the handful of places that must cross the tenant boundary

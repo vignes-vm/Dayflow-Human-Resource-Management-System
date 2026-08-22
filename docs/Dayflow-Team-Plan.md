@@ -32,7 +32,7 @@ M3 and M4 are **full-stack on their domain** — they own both the API and the U
 ## 2.2 Backend file ownership
 
 ```
-apps/api/
+backend/
 ├─ prisma/
 │  ├─ schema.prisma                        M1 ONLY — see §3.1
 │  ├─ migrations/                          M1 ONLY
@@ -72,7 +72,7 @@ apps/api/
 ## 2.3 Frontend file ownership
 
 ```
-apps/web/src/
+frontend/src/
 ├─ main.tsx · App.tsx                      M2 ONLY
 ├─ app/
 │  ├─ router.tsx                           M2 ONLY — all routes pre-stubbed, see §3.3
@@ -143,12 +143,12 @@ M1 should treat schema requests as an interrupt-priority task. A blocked teammat
 
 **Why so strict:** two people editing `schema.prisma` on separate branches produces conflicting migration folders, and resolving those mid-hackathon is a 40-minute hole.
 
-## 3.2 `apps/api/src/router.ts` — pre-stubbed in Step 1
+## 3.2 `backend/src/router.ts` — pre-stubbed in Step 1
 
 M1 writes every mount point on day one, before anyone branches:
 
 ```ts
-// apps/api/src/router.ts — M1 ONLY. Do not edit; your module file is already mounted.
+// backend/src/router.ts — M1 ONLY. Do not edit; your module file is already mounted.
 router.use("/auth",          authRoutes);          // M1
 router.use("/company",       companyRoutes);       // M1
 router.use("/settings",      settingsRoutes);      // M1
@@ -382,7 +382,7 @@ git add -A && git commit -m "chore: scaffold monorepo, tooling, CI and CLAUDE.md
 git push origin main
 ```
 Beyond the prompt, you must also produce in this commit:
-- `apps/api/src/router.ts` with **all 13 mounts** and stub route files (§3.2)
+- `backend/src/router.ts` with **all 13 mounts** and stub route files (§3.2)
 - `packages/shared/src/` with all 8 files created (empty but exporting) and the barrel wired
 - **every dependency from the blueprint stack table installed** (§3.4)
 

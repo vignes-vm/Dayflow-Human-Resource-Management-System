@@ -8,6 +8,7 @@ import { authRoutes } from "@/modules/auth/auth.routes.js";
 import { companyRoutes } from "@/modules/company/company.routes.js";
 import { settingsRoutes } from "@/modules/settings/settings.routes.js";
 import { notificationRoutes } from "@/modules/notifications/notifications.routes.js";
+import { streamRoutes } from "@/modules/notifications/stream.routes.js";
 import { auditRoutes } from "@/modules/audit/audit.routes.js";
 import { employeeRoutes } from "@/modules/employees/employees.routes.js";
 import { profileRoutes } from "@/modules/profile/profile.routes.js";
@@ -24,6 +25,7 @@ router.use("/auth", authRoutes); // M1
 router.use("/company", companyRoutes); // M1
 router.use("/settings", settingsRoutes); // M1
 router.use("/notifications", notificationRoutes); // M1
+router.use("/stream", streamRoutes); // M1 — SSE, added in Step 17
 router.use("/audit", auditRoutes); // M1
 router.use("/employees", employeeRoutes); // M3
 router.use("/profile", profileRoutes); // M3

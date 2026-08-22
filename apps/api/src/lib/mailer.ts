@@ -129,3 +129,36 @@ export async function sendCredentialsEmail(
   );
   return send(to, "Your Dayflow account is ready", html);
 }
+
+export async function sendTimeOffDecisionEmail(
+  to: string,
+  params: {
+    name: string;
+    decision: "APPROVED" | "REFUSED";
+    typeName: string;
+    dateRange: string;
+    comment?: string;
+    appUrl: string;
+  },
+): Promise<SendResult> {
+  const verb = params.decision === "APPROVED" ? "approved" : "declined";
+  const html = layout(
+    `Your time off request was ${verb}`,
+    `<p>Hi ${params.name}, your <strong>${params.typeName}</strong> request for ${params.dateRange} has been ${verb}.</p>
+     ${params.comment ? `<p style="color:#8C93A1;">"${params.comment}"</p>` : ""}
+     ${button(params.appUrl, "View request")}`,
+  );
+  return send(to, `Time off ${verb}`, html);
+}
+
+export async function sendPayslipReadyEmail(
+  to: string,
+  params: { name: string; month: string; year: number; appUrl: string },
+): Promise<SendResult> {
+  const html = layout(
+    "Your payslip is ready",
+    `<p>Hi ${params.name}, your payslip for ${params.month} ${params.year} has been published.</p>
+     ${button(params.appUrl, "View payslip")}`,
+  );
+  return send(to, `Payslip ready — ${params.month} ${params.year}`, html);
+}

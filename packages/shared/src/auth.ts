@@ -31,7 +31,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1).optional(),
+    currentPassword: z.string().min(1),
     newPassword: passwordSchema,
     confirmPassword: z.string(),
   })

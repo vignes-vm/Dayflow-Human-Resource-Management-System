@@ -13,7 +13,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Employees", path: "/employees" },
   { label: "Attendance", path: "/attendance" },
   { label: "Time Off", path: "/time-off" },
-  { label: "Payroll", path: "/payroll", roles: ["ADMIN"] },
+  { label: "Payroll", path: "/payroll" },
   { label: "Settings", path: "/settings", roles: ["ADMIN"] },
 ];
 

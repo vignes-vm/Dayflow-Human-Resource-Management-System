@@ -74,10 +74,10 @@ export const router = createBrowserRouter([
           { path: "/profile/me", element: withSuspense(<ProfilePage />) },
           { path: "/attendance", element: withSuspense(<AttendancePage />) },
           { path: "/time-off", element: withSuspense(<TimeOffPage />) },
+          { path: "/payroll", element: withSuspense(<PayrollPage />) },
           {
             element: <RoleRoute allow={["ADMIN"]} />,
             children: [
-              { path: "/payroll", element: withSuspense(<PayrollPage />) },
               { path: "/settings", element: withSuspense(<SettingsPage />) },
               { path: "/audit", element: withSuspense(<AuditLogPage />) },
             ],

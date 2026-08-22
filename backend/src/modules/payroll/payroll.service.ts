@@ -210,6 +210,9 @@ export async function runPayroll(companyId: string, actorId: string, month: numb
           data: {
             payableDays: result.payableDays.toString(),
             totalWorkingDays,
+            unpaidLeaveDays,
+            missingAttendanceDays,
+            perDayRate: result.perDayRate.toString(),
             grossEarnings: result.grossEarnings.toString(),
             totalDeductions: result.totalDeductions.toString(),
             netPay: result.netPay.toString(),
@@ -228,22 +231,22 @@ export async function runPayroll(companyId: string, actorId: string, month: numb
             year,
             payableDays: result.payableDays.toString(),
             totalWorkingDays,
+            unpaidLeaveDays,
+            missingAttendanceDays,
+            perDayRate: result.perDayRate.toString(),
             grossEarnings: result.grossEarnings.toString(),
             totalDeductions: result.totalDeductions.toString(),
             netPay: result.netPay.toString(),
             lossOfPay: result.lossOfPay.toString(),
             status: "DRAFT",
-            createdById: actorId,
           },
         });
       }
 
       await tx.payslipLine.createMany({
-        data: result.lines.map((l, i) => ({
+        data: result.lines.map((l) => ({
           payslipId: payslip!.id,
-          sequence: i,
-          code: l.code,
-          name: l.label,
+          label: l.label,
           category: l.category,
           amount: l.amount.toString(),
         })),
@@ -307,7 +310,7 @@ export async function publishPayroll(
   const drafts = await prisma.payslip.findMany({
     where: { companyId, month, year, status: "DRAFT" },
     include: {
-      lines: { orderBy: { sequence: "asc" } },
+      lines: { orderBy: { createdAt: "asc" } },
       employee: {
         include: {
           user: true,
@@ -342,7 +345,7 @@ export async function publishPayroll(
       totalDeductions: draft.totalDeductions.toString(),
       netPay: draft.netPay.toString(),
       lines: draft.lines.map((l) => ({
-        label: l.name,
+        label: l.label,
         amount: l.amount.toString(),
         category: l.category,
       })),

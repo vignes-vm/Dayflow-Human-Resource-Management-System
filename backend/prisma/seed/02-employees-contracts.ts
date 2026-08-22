@@ -138,7 +138,7 @@ export async function seed(): Promise<void> {
       if (person.isMgr) {
         await tx.department.updateMany({
           where: { id: depMap.get(person.d) },
-          data: { headId: emp.id },
+          data: { headEmployeeId: emp.id },
         });
       }
 
@@ -147,13 +147,18 @@ export async function seed(): Promise<void> {
       }
 
       // TimeOff Allocations
+      const allocationYearStart = new Date(`${JOINING_YEAR}-01-01`);
+      const allocationYearEnd = new Date(`${JOINING_YEAR}-12-31`);
       await tx.timeOffAllocation.createMany({
         data: timeOffTypes.map((t) => ({
+          companyId: company.id,
           employeeId: emp.id,
           typeId: t.id,
-          year: 2026, // current year
-          totalDays: t.defaultAllocationDays,
-          usedDays: 0,
+          days: t.defaultAllocationDays,
+          validFrom: allocationYearStart,
+          validTo: allocationYearEnd,
+          status: "APPROVED" as const,
+          note: "Default allocation on hire",
         })),
       });
 

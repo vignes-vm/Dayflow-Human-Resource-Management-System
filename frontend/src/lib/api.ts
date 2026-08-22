@@ -1,6 +1,8 @@
 import type { ErrorEnvelope } from "@dayflow/shared";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api/v1";
+/** Backend origin without the /api/v1 suffix — for linking to /uploads/* static files. */
+const API_ORIGIN = API_URL.replace(/\/api\/v1\/?$/, "");
 
 export class ApiClientError extends Error {
   status: number;
@@ -93,4 +95,4 @@ export const api = {
     request<T>(path, { ...options, method: "DELETE" }),
 };
 
-export { API_URL };
+export { API_URL, API_ORIGIN };

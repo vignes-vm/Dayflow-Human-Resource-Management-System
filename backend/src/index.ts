@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import path from "node:path";
 
 import { errorHandler, notFoundHandler } from "@/middleware/errorHandler.js";
 import { requestId } from "@/middleware/requestId.js";
@@ -23,6 +24,17 @@ app.use(
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
 app.use(requestId);
+
+// Uploaded avatars, documents and payslip PDFs — served as static files so
+// the frontend (a different origin) can link/download them directly.
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    res.set("Cross-Origin-Resource-Policy", "cross-origin");
+    next();
+  },
+  express.static(path.resolve(process.env.UPLOAD_DIR ?? "./uploads")),
+);
 
 app.use("/api/v1", router);
 

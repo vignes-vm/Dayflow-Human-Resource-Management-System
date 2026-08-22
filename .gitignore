@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+Dayflow-Team-Plan.md
+Dayflow-ClaudeCode-Prompts-v2.md
+Dayflow-Blueprint-v2.md

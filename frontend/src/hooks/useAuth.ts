@@ -9,7 +9,12 @@ export function useAuth() {
     queryKey: queryKeys.me(),
     queryFn: () => api.get<MeResponse>("/auth/me"),
     retry: false,
-    staleTime: 60_000,
+    retryOnMount: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   const unauthenticated =

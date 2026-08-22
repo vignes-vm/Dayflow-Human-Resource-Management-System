@@ -12,17 +12,17 @@ pnpm workspaces — `backend` (Express + TypeScript + Prisma), `frontend` (Vite 
 
 ```bash
 pnpm install
-cp backend/.env.example backend/.env      # then point DATABASE_URL at a local Postgres
+cp backend/.env.example backend/.env      
 cp frontend/.env.example frontend/.env
 pnpm --filter @dayflow/api prisma migrate dev
-pnpm dev                                     # runs api (:4000) + web (:5173) together
+pnpm dev                                     
 ```
 
 ```bash
-pnpm typecheck   # all packages
-pnpm lint        # all packages
-pnpm test        # all packages
-pnpm build       # all packages
+pnpm typecheck   
+pnpm lint        
+pnpm test        
+pnpm build       
 ```
 
 `GET /api/v1/health` should return `{ "status": "ok" }` once the API is running.

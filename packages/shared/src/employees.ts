@@ -61,7 +61,8 @@ export type SelfUpdateEmployeeInput = z.infer<typeof selfUpdateEmployeeSchema>;
 
 export const createDepartmentSchema = z.object({
   name: z.string().min(1).max(100),
-  headId: z.string().cuid().optional().nullable(),
+  /** Must be an Employee id — maps to Department.headEmployeeId in the schema */
+  headEmployeeId: z.string().cuid().optional().nullable(),
 });
 export type CreateDepartmentInput = z.infer<typeof createDepartmentSchema>;
 
